@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const signInUser = async (phoneNumber, password) => {
     try {
-      const response = await fetch('https://boss-lifting-club-api-1.onrender.com/users/signin', {
+      const response = await fetch('http://localhost:8082/users/signin', {
         method: 'POST',
         body: JSON.stringify({phoneNumber, password }),
         headers: { 'Content-Type': 'application/json' },
@@ -24,7 +24,7 @@ export const signInUser = async (phoneNumber, password) => {
 
   export const changeUserPassword = async (userId, newPassword) => {
     try {
-      const response = await fetch('https://boss-lifting-club-api-1.onrender.com/users/password/'+userId, {
+      const response = await fetch('http://localhost:8082/users/password/'+userId, {
         method: 'PUT',
         body: JSON.stringify({password :newPassword}),
         headers: { 'Content-Type': 'application/json' },

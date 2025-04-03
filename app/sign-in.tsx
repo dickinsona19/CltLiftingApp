@@ -141,7 +141,7 @@ export default function SignInScreen() {
 
   const handleSignIn = async () => {
     try {
-      const response = await fetch('https://boss-lifting-club-api-1.onrender.com/users/signin', {
+      const response = await fetch('http://localhost:8082/users/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumber, password }),

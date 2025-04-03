@@ -42,19 +42,24 @@ export const UserContext = createContext<UserContextType | undefined>(undefined)
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
    const [user, setUser] = useState<User | null>(
-  null
-  // {
-  //   id: 3,
-  //   firstName: "Andrew",
-  //   lastName: "Dickinson",
-  //   password: "$2a$10$gQIe4p9PKbFR/XKwfIxeCegGBEnnmSSMBLvWNsp2gBQzTYqi3cWDe",
-  //   phoneNumber: "8124473167",
-  //   isInGoodStanding: false,
-  //   createdAt: "2025-03-11T20:15:14.492854",
-  //   entryQrcodeToken: "1L2QAO6E7S",
-  //   userStripeMemberId: null,
-  //   userTitles: null
-  // }
+ 
+  {
+    id: 3,
+    firstName: "Andrew",
+    lastName: "Dickinson",
+    password: "$2a$10$gQIe4p9PKbFR/XKwfIxeCegGBEnnmSSMBLvWNsp2gBQzTYqi3cWDe",
+    phoneNumber: "8124473167",
+    isInGoodStanding: false,
+    createdAt: "2025-03-11T20:15:14.492854",
+    entryQrcodeToken: "1L2QAO6E7S",
+    userStripeMemberId: null,
+    userTitles: null,
+    profilePicture: "path_to_image",
+    signatureData: "signature_data",
+    membership: null,
+    referralCode: "referral_code",
+    referredMembersDto: [],
+  }
 );
 
   // useEffect(() => {

@@ -5,7 +5,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useState } from 'react';
-import Clipboard from '@react-native-clipboard/clipboard';
+import * as Clipboard from 'expo-clipboard';
 import { Box, Divider } from '@gluestack-ui/themed';
 import { useUser } from '@/context/UserContext';
 
@@ -22,11 +22,11 @@ export default function Referral() {
     'Inter-Bold': Inter_700Bold,
   });
 console.log(user)
-  const handleCopy = () => {
-    Clipboard.setString(user?.referralCode || '');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+const handleCopy = async () => {
+  await Clipboard.setStringAsync(user?.referralCode || '');
+  setCopied(true);
+  setTimeout(() => setCopied(false), 2000);
+};
 
   if (!fontsLoaded) {
     return null;
