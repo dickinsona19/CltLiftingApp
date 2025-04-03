@@ -120,7 +120,7 @@ export default function SetupScreen() {
           <View style={styles.buttonContainer}>
             <Pressable 
               style={styles.button} 
-              onPress={() => Linking.openURL(`http://localhost:5173/signWaiver?userId=${user?.id}`)}
+              onPress={() => Linking.openURL(`https://boss-lifting-club.onrender.com/signWaiver?userId=${user?.id}`)}
               disabled={!!user?.signatureData}
             >
                {user?.signatureData ? <Check color="#1A1A1A" size={24} /> : <FileText color="#1A1A1A" size={24} />}

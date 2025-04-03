@@ -18,7 +18,7 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<ImagePicker.ImagePickerResult | null>(null);
   const { user, updateUser } = useUser();
-  const BASE_URL = 'http://localhost:8082';
+  const BASE_URL = 'https://boss-lifting-club.onrender.com';
 
   const checkAuth = async () => {
     try {

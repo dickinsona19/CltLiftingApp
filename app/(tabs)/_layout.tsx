@@ -20,7 +20,7 @@ export default function TabLayout() {
       try {
         const token = await AsyncStorage.getItem('userToken');
         if (token) {
-          const response = await fetch('http://localhost:8082/auth/signin/validate', {
+          const response = await fetch('https://boss-lifting-club.onrender.com/auth/signin/validate', {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (response.ok) {
