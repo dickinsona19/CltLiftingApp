@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, Pressable, Linking } from 'react-native';
-import { router } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import Animated, { 
   FadeIn,
   useAnimatedStyle,
@@ -14,6 +14,8 @@ import { FileText, Camera, Check } from 'lucide-react-native';
 
 import EditImageModal from './(tabs)/profile/EditImageModal';
 import { useUser } from '@/context/UserContext';
+import { theme } from '@/constants/theme';
+
 const { width, height } = Dimensions.get('window');
 
 const Circle = ({ delay, size, position, color }: any) => {
@@ -53,11 +55,14 @@ const Circle = ({ delay, size, position, color }: any) => {
 };
 
 export default function SetupScreen() {
-    const {user} =useUser()
-
+    const {user, refreshUser} =useUser()
+    const [waiverSigned, setWaiverSigned] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
-
-
+  
+  useEffect(() => {
+    console.log('Hit 1')
+    refreshUser()
+  }, [waiverSigned]);
 
   return (
     <>
@@ -67,19 +72,19 @@ export default function SetupScreen() {
           delay={0}
           size={300}
           position={{ top: -100, left: -100 }}
-          color="rgba(212, 175, 55, 0.1)"
+          color="rgba(75, 156, 211, 0.1)"
         />
         <Circle
           delay={200}
           size={200}
           position={{ top: height * 0.3, right: -50 }}
-          color="rgba(212, 175, 55, 0.15)"
+          color="rgba(75, 156, 211, 0.15)"
         />
         <Circle
           delay={400}
           size={250}
           position={{ bottom: -100, left: -50 }}
-          color="rgba(212, 175, 55, 0.08)"
+          color="rgba(75, 156, 211, 0.08)"
         />
         
         {/* Decorative Lines */}
@@ -102,17 +107,17 @@ export default function SetupScreen() {
           
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
+              <Text style={styles.statNumber}>NO</Text>
+              <Text style={styles.statLabel}>LIMIT</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.statItem}>
               <Text style={styles.statNumber}>500+</Text>
-              <Text style={styles.statLabel}>MEMBERS</Text>
+              <Text style={styles.statLabel}>WORKOUTS</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>24/7</Text>
-              <Text style={styles.statLabel}>ACCESS</Text>
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>15k</Text>
+              <Text style={styles.statNumber}>8k</Text>
               <Text style={styles.statLabel}>SQ FT</Text>
             </View>
           </View>
@@ -120,9 +125,22 @@ export default function SetupScreen() {
           <View style={styles.buttonContainer}>
             <Pressable 
               style={styles.button} 
-              onPress={() => Linking.openURL(`https://boss-lifting-club.onrender.com/signWaiver?userId=${user?.id}`)}
+              onPress={async () => {
+                const url = `https://boss-lifting-club.onrender.com/signWaiver?userId=${user?.id}`;
+                try {
+                  const result = await WebBrowser.openBrowserAsync(url);
+                  if (result.type === 'dismiss' || result.type === 'cancel') {
+                    setWaiverSigned(!waiverSigned); 
+                    console.log(waiverSigned)
+                    console.log(user)
+                  }
+                } catch (error) {
+                  console.error('Failed to open browser:', error);
+                }
+              }}
               disabled={!!user?.signatureData}
             >
+              {}
                {user?.signatureData ? <Check color="#1A1A1A" size={24} /> : <FileText color="#1A1A1A" size={24} />}
               <Text style={styles.buttonText}>Sign Waiver</Text>
             </Pressable>
@@ -130,9 +148,9 @@ export default function SetupScreen() {
             <Pressable 
               style={styles.button}
               onPress={() => setShowImageModal(true)}
-              disabled={!!user?.profilePicture}
+              disabled={!!user?.profilePictureUrl}
             >
-              {user?.profilePicture ? <Check color="#1A1A1A" size={24} /> : <Camera color="#1A1A1A" size={24} />}
+              {user?.profilePictureUrl ? <Check color="#1A1A1A" size={24} /> : <Camera color="#1A1A1A" size={24} />}
               <Text style={styles.buttonText}>Add Photo</Text>
             </Pressable>
           </View>
@@ -180,7 +198,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 42,
     fontWeight: '800',
-    color: '#D4AF37',
+    color: theme.colors.primary,
     textAlign: 'center',
     letterSpacing: 4,
     marginBottom: 16,
@@ -209,7 +227,7 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#D4AF37',
+    color: theme.colors.primary,
     marginBottom: 8,
   },
   statLabel: {
@@ -233,7 +251,7 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    backgroundColor: '#D4AF37',
+    backgroundColor: theme.colors.primary,
     padding: 16,
     borderRadius: 12,
     flexDirection: 'row',

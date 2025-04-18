@@ -5,12 +5,12 @@ import { QrCode, Dumbbell, Calendar, User } from 'lucide-react-native';
 import { theme } from '@/constants/theme';
 import Header from '@/components/Header';
 import { TouchableOpacity, Alert } from 'react-native';
-import { View, Text } from 'react-native';
+import { ImageBackground, View, Text } from 'react-native';
 import { useUser } from '../../context/UserContext';
 import SignInScreen from '../sign-in';
 import SetupScreen from '../setup';
 export default function TabLayout() {
-  const { user, updateUser } = useUser();
+  const { user, updateUser, userMedia } = useUser();
   const [isLoading, setIsLoading] = useState(true);
 
 
@@ -19,15 +19,18 @@ export default function TabLayout() {
     const checkAuth = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
+        console.log(token)
         if (token) {
-          const response = await fetch('https://boss-lifting-club.onrender.com/auth/signin/validate', {
+          const response = await fetch('https://boss-lifting-club-api.onrender.com/auth/signin/validate', {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (response.ok) {
             const userData = await response.json();
             console.log('Validation success:', userData);
             updateUser(userData.user);
+            console.log(userData.user)
           } else {
+            
             const errorData = await response.json();
             console.error('Validation failed:', errorData.error);
             await AsyncStorage.removeItem('userToken');
@@ -39,15 +42,24 @@ export default function TabLayout() {
         setIsLoading(false);
       }
     };
-
     checkAuth();
   }, []);
 
   if (isLoading) {
-    return <View><Text>Loading...</Text></View>;
+    return (
+      <ImageBackground
+        source={require('../../assets/images/IMG_1936.jpg')}
+        style={{ flex: 1 }}
+        resizeMode="cover"
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: '#fff' }}>Loading...</Text>
+        </View>
+      </ImageBackground>
+    );
   }
 if(!user){return <SignInScreen /> }
-if(!user?.profilePicture || !user?.signatureData){
+if(!user?.profilePictureUrl || !user?.signatureData){
   return <SetupScreen/>
 }
 
@@ -124,7 +136,7 @@ if(!user?.profilePicture || !user?.signatureData){
         />
 
         // Second Tab
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="events"
           options={{
             title: 'EVENTS',
@@ -161,7 +173,7 @@ if(!user?.profilePicture || !user?.signatureData){
               <TouchableOpacity {...props} disabled={true} />
             ),
           }}
-        />
+        /> */}
         <Tabs.Screen
           name="profile"
           options={{

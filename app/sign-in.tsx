@@ -141,7 +141,7 @@ export default function SignInScreen() {
 
   const handleSignIn = async () => {
     try {
-      const response = await fetch('https://boss-lifting-club.onrender.com/users/signin', {
+      const response = await fetch('https://boss-lifting-club-api.onrender.com/users/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumber, password }),
@@ -227,10 +227,8 @@ export default function SignInScreen() {
               {error && <ErrorText>{error}</ErrorText>}
 
               <SignUpContainer>
-                <SignUpText>Don't have an account?</SignUpText>
-                <SignUpLink onPress={() => Linking.openURL('https://boss-lifting-club.onrender.com/signup')}>
-                  Sign up
-                </SignUpLink>
+                <SignUpText>Don't have an account? Come visit our front desk!</SignUpText>
+                
               </SignUpContainer>
             </Form>
           </ContentContainer>

@@ -1,16 +1,17 @@
-import { View, TouchableOpacity, StyleSheet, Image, Text, Pressable, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Image, Text, ActivityIndicator } from 'react-native';
 import { X, Upload, Camera, Trash2 } from 'lucide-react-native';
 import React, { useState, useCallback } from 'react';
 import { useUser } from '@/context/UserContext';
 import Animated, { FadeIn, FadeOut, SlideInUp, SlideOutDown } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import { theme } from '@/constants/theme';
 
 interface EditImageModalProps {
   setModalVisible: (visible: boolean) => void;
 }
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
@@ -18,7 +19,7 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<ImagePicker.ImagePickerResult | null>(null);
   const { user, updateUser } = useUser();
-  const BASE_URL = 'https://boss-lifting-club.onrender.com';
+  const BASE_URL = 'https://boss-lifting-club-api.onrender.com';
 
   const checkAuth = async () => {
     try {
@@ -39,9 +40,10 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
     }
   };
 
+
+
   const handleUpload = async () => {
-    // Check if file exists and is in the correct format
-    if (!file) {
+    if (!file || !file.assets || !file.assets[0]?.uri) {
       setError('Please select an image first');
       return;
     }
@@ -51,24 +53,29 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
   
     try {
       const formData = new FormData();
+      const asset = file.assets[0];
   
-      // Handle file based on platform (web vs mobile)
-      if (file instanceof File) {
-        // Web: File object from <input type="file">
-        formData.append('picture', file, file.name || 'profile.jpg');
-      } else if (file?.assets?.[0]?.uri) {
-        // Mobile: React Native image picker
-        const image = file.assets[0];
-        const blob = await fetch(image.uri).then(res => res.blob()); // Fetch the image as a Blob
-        formData.append('picture', blob, image.fileName || 'profile.jpg'); // Append the Blob
-      } else {
-        throw new Error('Unsupported file format');
+      let localUri = asset.uri;
+      let filename = asset.name || `profile_${user?.id}.jpg`;
+      let mimeType = asset.mimeType || 'image/jpeg';
+  
+      // iOS URIs sometimes lack file:// prefix
+      if (!localUri.startsWith('file://') && Platform.OS !== 'web') {
+        localUri = 'file://' + localUri;
       }
   
+      formData.append('file', {
+        uri: localUri,
+        name: filename,
+        type: mimeType,
+      } as any);
+  
       const response = await fetch(`${BASE_URL}/users/${user?.id}/picture`, {
-        method: 'PUT',
+        method: 'POST',
         body: formData,
-        // Let the browser set Content-Type automatically for FormData
+        headers: {
+          'Accept': 'application/json',
+        },
       });
   
       if (!response.ok) {
@@ -76,48 +83,95 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
         throw new Error(errorData.message || 'Failed to upload image');
       }
   
-      await response.json();
+      const data = await response.json();
+      console.log('Image uploaded successfully:', data);
+  
       await checkAuth();
       setModalVisible(false);
-    } catch (error) {
-      setError(error.message || 'Failed to upload image. Please try again.');
+    } catch (error: any) {
+      setError(error.message || 'Upload failed. Please try again.');
       console.error('Upload error:', error);
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   const handlePickImage = useCallback(async () => {
+    console.log('handlePickImage called');
     setError(null);
-
-    // Request permission if not already granted
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      setError('Permission to access media library was denied');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-      allowsEditing: true, // Optional: allows cropping
-      aspect: [1, 1], // Optional: enforces square aspect ratio
-    });
-
-    if (result.canceled) {
-      console.log('User cancelled image picker');
-    } else if (result.assets && result.assets[0]) {
-      const selectedImage = result.assets[0];
-      // Validate file size (max 5MB)
-      if (selectedImage.fileSize && selectedImage.fileSize > 5 * 1024 * 1024) {
-        setError('Image size should be less than 5MB');
-        return;
+  
+    try {
+      if (Platform.OS === 'web') {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (event: Event) => {
+          const target = event.target as HTMLInputElement;
+          const file = target?.files?.[0];
+  
+          if (file) {
+            console.log('Selected image on web:', file);
+  
+            if (file.size > 5 * 1024 * 1024) {
+              setError('Image size should be less than 5MB');
+              return;
+            }
+  
+            const fileUri = URL.createObjectURL(file);
+            setProfilePicture(fileUri);
+            setFile({
+              assets: [{
+                uri: fileUri,
+                file,
+                mimeType: file.type,
+                name: file.name,
+              }]
+            });
+          }
+        };
+        input.click();
+      } else {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          setError('Permission to access media library was denied');
+          return;
+        }
+  
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 1,
+          allowsEditing: true,
+          aspect: [1, 1],
+        });
+  
+        if (result.canceled) {
+          console.log('User cancelled image picker');
+          return;
+        }
+  
+        const selectedImage = result.assets[0];
+        const fileInfo = await FileSystem.getInfoAsync(selectedImage.uri);
+        if (fileInfo.size && fileInfo.size > 5 * 1024 * 1024) {
+          setError('Image size should be less than 5MB');
+          return;
+        }
+  
+        setFile({
+          assets: [{
+            uri: selectedImage.uri,
+            mimeType: selectedImage.mimeType || 'image/jpeg', // Fallback
+            name: selectedImage.fileName || `profile_${user?.id}.jpg`
+          }]
+        });
+  
+        setProfilePicture(selectedImage.uri);
       }
-      setFile(result);
-      setProfilePicture(selectedImage.uri);
+    } catch (error) {
+      console.error('Image picker error:', error);
+      setError('Failed to pick image. Please try again.');
     }
-  }, []);
-
+  }, [user]);
+  
   const handleRemoveImage = useCallback(() => {
     setProfilePicture(null);
     setFile(null);
@@ -129,14 +183,14 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
       <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(200)} style={styles.overlay}>
         <Animated.View entering={SlideInUp.duration(300)} exiting={SlideOutDown.duration(200)} style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.title}>Digital Access Card</Text>
+            <Text style={styles.title}>Face Picture</Text>
             <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
               <X size={24} color="#FFF" />
             </TouchableOpacity>
           </View>
 
           <View style={styles.content}>
-            <Text style={styles.subtitle}>Update your profile picture</Text>
+            <Text style={styles.subtitle}>Let's put a face to this account!</Text>
 
             {error && (
               <Animated.Text entering={FadeIn} style={styles.errorText}>
@@ -159,14 +213,21 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
             )}
 
             <View style={styles.uploadContainer}>
-              <AnimatedPressable style={styles.uploadButton} onPress={handlePickImage} disabled={isLoading}>
+              <TouchableOpacity
+                style={[styles.uploadButton, isLoading && styles.disabledButton]}
+                onPress={() => {
+                  console.log('Choose Image pressed');
+                  handlePickImage();
+                }}
+                disabled={isLoading}
+              >
                 <Upload size={20} color="#1A1A1A" />
                 <Text style={styles.uploadText}>
                   {profilePicture ? 'Choose Different Image' : 'Choose Image'}
                 </Text>
-              </AnimatedPressable>
+              </TouchableOpacity>
 
-              <AnimatedPressable
+              <TouchableOpacity
                 style={[styles.uploadButton, styles.submitButton, !file && styles.disabledButton]}
                 onPress={handleUpload}
                 disabled={!file || isLoading}
@@ -178,7 +239,7 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
                     {profilePicture ? 'Update Picture' : 'Upload Picture'}
                   </Text>
                 )}
-              </AnimatedPressable>
+              </TouchableOpacity>
             </View>
           </View>
         </Animated.View>
@@ -187,7 +248,6 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
   );
 };
 
-// Styles remain unchanged
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -249,7 +309,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 100,
     borderWidth: 3,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   removeButton: {
     position: 'absolute',
@@ -280,7 +340,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   uploadButton: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: theme.colors.primary,
     padding: 16,
     borderRadius: 8,
     flexDirection: 'row',

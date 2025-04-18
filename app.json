@@ -1,27 +1,38 @@
 {
   "expo": {
-    "name": "bolt-expo-nativewind",
-    "slug": "bolt-expo-nativewind",
+    "name": "CLT Lifting Club",
+    "slug": "cltliftingclub",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "cltliftingclub",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/IMG_1936.jpg",
+ "resizeMode": "cover",
+      "backgroundColor": "#000000"
+    },
     "newArchEnabled": true,
     "android": {
-      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "com.adickinson.CltLiftingClub"
     },
     "ios": {
+      "buildNumber": "6",
       "supportsTablet": true,
-      "bundleIdentifier": "com.adickinson.boltexponativewind",
+      "bundleIdentifier": "com.adickinson.CltLiftingClub",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "Allow access to your photo library to upload a profile picture."
+        "NSPhotoLibraryUsageDescription": "Allow access to your photo library to upload a profile picture.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon.png"
     },
     "plugins": [
       "expo-router"
@@ -34,8 +45,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "5bf4f4e3-9c7a-4c05-915d-bb4ae25944d6"
+        "projectId": "07d8099c-e70f-42cc-8dc5-32df77a6dee9"
       }
-    }
+    },
+    "owner": "anndreuis"
   }
 }

@@ -8,6 +8,7 @@ import { useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
 import { Box, Divider } from '@gluestack-ui/themed';
 import { useUser } from '@/context/UserContext';
+import { theme } from '@/constants/theme';
 
 
 export default function Referral() {
@@ -21,7 +22,6 @@ export default function Referral() {
     'Inter-SemiBold': Inter_600SemiBold,
     'Inter-Bold': Inter_700Bold,
   });
-console.log(user)
 const handleCopy = async () => {
   await Clipboard.setStringAsync(user?.referralCode || '');
   setCopied(true);
@@ -35,7 +35,7 @@ const handleCopy = async () => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <LinearGradient
-        colors={['rgba(212, 175, 55, 0.15)', 'rgba(17, 17, 17, 0)']}
+         colors={['rgba(75, 156, 211, 0.25)', 'rgba(38, 22, 183, 0)']}
         style={styles.gradient}
       />
 
@@ -45,7 +45,7 @@ const handleCopy = async () => {
           onPress={() => router.navigate('/profile')}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="chevron-back" size={28} color="#D4AF37" />
+            <Ionicons name="chevron-back" size={28} color={theme.colors.primary} />
             <Text style={styles.headerTitle}>Profile</Text>
           </View>
         </TouchableOpacity>
@@ -63,7 +63,7 @@ const handleCopy = async () => {
                 <Ionicons 
                   name="gift-outline" 
                   size={24} 
-                  color="#D4AF37" 
+                  color={theme.colors.primary}
                   style={styles.codeIcon} 
                 />
                 <Text style={styles.referralCode}>{user?.referralCode}</Text>
@@ -76,7 +76,7 @@ const handleCopy = async () => {
                 <Ionicons 
                   name={copied ? "checkmark-circle" : "copy-outline"} 
                   size={24} 
-                  color={copied ? "#D4AF37" : "#fff"} 
+                  color={copied ? theme.colors.primary : "#fff"} 
                 />
               </TouchableOpacity>
             </LinearGradient>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 200,
+    height: 600,
   },
   header: {
     flexDirection: 'row',

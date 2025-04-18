@@ -8,12 +8,13 @@ import { useUser } from '@/context/UserContext';
 import { useState } from 'react';
 import EditImageModal from './EditImageModal';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { theme } from '@/constants/theme';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user, updateUser } = useUser();
+  const { user, updateUser, userMedia } = useUser();
   const [modalVisible, setModalVisible] = useState(false);
   const [fontsLoaded] = useFonts({
     'Inter-Regular': Inter_400Regular,
@@ -24,14 +25,12 @@ export default function ProfileScreen() {
   if (!fontsLoaded) {
     return null;
   }
-  const profilePictureUri = user?.profilePicture
-    ? `data:image/jpeg;base64,${user.profilePicture}` // Adjust MIME type if needed (e.g., image/png)
-    : null;
+  const profilePictureUri = user?.profilePictureUrl
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <LinearGradient
-        colors={['rgba(212, 175, 55, 0.15)', 'rgba(17, 17, 17, 0)']}
+       colors={['rgba(75, 156, 211, 0.25)', 'rgba(38, 22, 183, 0)']}
         style={styles.gradient}
       />
       
@@ -66,12 +65,12 @@ export default function ProfileScreen() {
       </Animated.View>
    
      
-
+{user?.membership &&
       <Animated.View entering={FadeInUp.delay(600).duration(1000)} style={styles.section}>
         <Text style={styles.sectionTitle}>Membership Details</Text>
         <View style={styles.membershipCard}>
           <View style={styles.membershipHeader}>
-            <Ionicons name="fitness" size={24} color="#D4AF37" />
+            <Ionicons name="fitness" size={24} color={theme.colors.primary} />
             <Text style={styles.membershipType}>{user?.membership?.name}</Text>
           </View>
           <Text style={styles.membershipExpiry}>$ {user?.membership?.price}/{user?.membership?.chargeInterval}</Text>
@@ -82,7 +81,7 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Animated.View>
-
+}
      
       <Animated.View entering={FadeInUp.delay(1000).duration(1000)} style={styles.section}>
         <Text style={styles.sectionTitle}>Account Settings</Text>
@@ -93,22 +92,22 @@ export default function ProfileScreen() {
           >
             <View style={styles.settingLeft}>
               <View style={styles.iconContainer}>
-                <Ionicons name="key" size={20} color="#D4AF37" />
+                <Ionicons name="key" size={20} color={theme.colors.primary} />
               </View>
               <Text style={styles.settingText}>Password & Security</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#8E8E93" />
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
           </TouchableOpacity>
           <TouchableOpacity
            style={styles.settingItem}
            onPress={() => router.push('/(tabs)/profile/Referral')}>
             <View style={styles.settingLeft}>
               <View style={styles.iconContainer}>
-                <Ionicons name="shield-checkmark" size={20} color="#D4AF37" />
+                <Ionicons name="shield-checkmark" size={20} color={theme.colors.primary} />
               </View>
               <Text style={styles.settingText}>Referral</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#8E8E93" />
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
           </TouchableOpacity>
 
             
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 200,
+    height: 600,
   },
   modalContainer: {
     flex: 1,
@@ -209,7 +208,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 3,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   editIconContainer: {
     position: 'absolute',
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#D4AF37',
+    backgroundColor: theme.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -234,10 +233,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: theme.colors.primary,
   },
   membershipStatus: {
-    color: '#D4AF37',
+    color: theme.colors.primary,
     fontSize: 14,
     fontFamily: 'Inter-SemiBold',
   },
@@ -431,7 +430,7 @@ const styles = StyleSheet.create({
     }),
   },
   logoutText: {
-    color: '#D4AF37',
+    color: theme.colors.primary,
     fontSize: 16,
     fontFamily: 'Inter-SemiBold',
   },

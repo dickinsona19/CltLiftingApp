@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { signInUser } from '../actions/User';
+
 
 interface Membership {
   id: number;
@@ -32,15 +32,23 @@ interface User {
   referralCode: string;
   referredMembersDto: ReferredUser[]; 
 }
-
+interface UserMediaDTO {
+  profilePicture: string | null;
+  signatureData: string | null;
+  waiverSignedDate: string | null;
+}
 interface UserContextType {
   user: User | null;
+  userMedia: UserMediaDTO | null;
   updateUser: (data: Partial<User>) => void;
+  fetchUserMedia: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
-
+const BASE_URL = 'https://boss-lifting-club-api.onrender.com';
 export function UserProvider({ children }: { children: React.ReactNode }) {
+  const [userMedia, setUserMedia] = useState<UserMediaDTO | null>(null);
    const [user, setUser] = useState<User | null>(null
  
   // {
@@ -76,17 +84,55 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   //   signIn();
   // }, []);
 
+  useEffect(() => {
+    console.log('User changed:', user);
+    fetchUserMedia()
+  }, [user]);
+  const fetchUserMedia = async () => {
+    if (!user?.id) {
+      console.log('No user ID available to fetch media');
+      setUserMedia(null); // Clear userMedia if no user is present
+      return;
+    }
+
+    try {
+      const response = await fetch(`${BASE_URL}/users/${user.id}/media`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add authorization header if needed
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user media');
+      }
+
+      const mediaData: UserMediaDTO = await response.json();
+      setUserMedia(mediaData);
+
+    } catch (error) {
+      console.error('Error fetching user media:', error);
+      setUserMedia(null); // Clear userMedia on error
+    }
+  };
   const updateUser = (data: Partial<User>) => {
     setUser(data as User);
     console.log(data)
   };
-
+const refreshUser = async () => {
+    const res = await fetch(`${BASE_URL}/users/${user?.id}`);
+    const updatedUser = await res.json();
+    console.log('Heroo'+updatedUser)
+    setUser(updatedUser);
+  };
   return (
-    <UserContext.Provider value={{ user, updateUser }}>
+<UserContext.Provider value={{ user, userMedia, updateUser, fetchUserMedia, refreshUser }}>
       {children}
     </UserContext.Provider>
   );
 }
+
 
 export const useUser = () => {
   const context = useContext(UserContext);

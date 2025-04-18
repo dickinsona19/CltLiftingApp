@@ -4,10 +4,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useFonts, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
-
+import { useUser } from '@/context/UserContext';
+import { theme } from '@/constants/theme';
 export default function HomeScreen() {
   const screenWidth = Dimensions.get('window').width;
   const qrSize = Math.min(screenWidth * 0.6, 280);
+  const {user} =useUser()
   
   const [fontsLoaded] = useFonts({
     'Inter-Regular': Inter_400Regular,
@@ -18,13 +20,25 @@ export default function HomeScreen() {
   if (!fontsLoaded) {
     return null;
   }
+  const callApi = async () => {
+    try {
+      const response = await fetch('https://example.com/api', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      console.log('API response:', data);
+    } catch (error) {
+      console.error('API error:', error);
+    }
+  };
 
   return (
     
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       
       <LinearGradient
-        colors={['rgba(212, 175, 55, 0.15)', 'rgba(17, 17, 17, 0)']}
+        colors={['rgba(75, 156, 211, 0.25)', 'rgba(38, 22, 183, 0)']}
         style={styles.gradient}
       />
       
@@ -41,21 +55,33 @@ export default function HomeScreen() {
 
           <View style={styles.qrContainer}>
             <QRCode
-              value="example-qr-value"
+              value={user?.entryQrcodeToken}
               size={qrSize}
               color="#000000"
               backgroundColor="#FFFFFF"
             />
           </View>
+          <TouchableOpacity style={[styles.walletButton, { opacity: 0.5 }]} disabled onPress={() => console.log('Wallet button clicked')}>
 
-          <TouchableOpacity style={styles.walletButton}>
             <Ionicons name="wallet" size={20} color="#111111" />
             <Text style={styles.walletButtonText}>ADD TO WALLET</Text>
+            <Text style={{
+              position: 'absolute',
+              zIndex:99,
+              top: -10,
+              right: -10,
+              fontSize: 12,
+              color: '#fff',
+              backgroundColor: '#03055B',
+              borderRadius: 20,
+              paddingHorizontal: 8,
+              paddingVertical: 4
+            }}>Soon</Text>
           </TouchableOpacity>
 
-          <View style={styles.statusContainer}>
+          {/* <View style={styles.statusContainer}>
             <Text style={styles.statusText}>Invalid Member</Text>
-          </View>
+          </View> */}
         </View>
       </Animated.View>
     </ScrollView>
@@ -72,7 +98,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 200,
+    height: 600,
   },
   header: {
     paddingTop: Platform.OS === 'web' ? 40 : 60,
@@ -148,7 +174,7 @@ const styles = StyleSheet.create({
   walletButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#D4AF37',
+    backgroundColor: theme.colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 100,

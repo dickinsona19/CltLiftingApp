@@ -1,7 +1,7 @@
 export const theme = {
   colors: {
-    primary: '#E5B94E', // Luxurious gold
-    secondary: '#9D8FD0', // Soft purple
+    primary: '#4B9CD3', // Luxurious Blue
+    secondary: '#4B9CD3', // Soft purple
     accent: '#2A2D3E', // Deep navy
     background: '#141519', // Rich dark
     surface: '#1E1F25', // Elevated dark
@@ -14,7 +14,7 @@ export const theme = {
     success: '#44FF44',
     overlay: 'rgba(20, 21, 25, 0.85)',
     gradient: {
-      primary: ['#E5B94E', '#C7934A'],
+      primary: ['#4B9CD3', '#4B9CD3'],
       dark: ['rgba(20, 21, 25, 0)', 'rgba(20, 21, 25, 0.95)'],
     },
   },

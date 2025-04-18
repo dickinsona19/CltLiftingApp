@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { theme } from '@/constants/theme';
 import { Bell } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import {HeaderLogo} from '../assets/images/icon.png'
 const HeaderContainer = styled.View`
   height: ${Platform.OS === 'web' ? '80px' : '100px'};
   background-color: ${theme.colors.background};
@@ -37,7 +37,7 @@ const LogoContainer = styled.View`
 const LogoText = styled.Text`
   font-family: ${theme.fonts.bold};
   font-size: 32px;
-  color: ${theme.colors.background};
+  color: #695AF6;
   line-height: 38px;
   z-index: 1;
 `;
@@ -77,7 +77,10 @@ const NotificationBadge = styled.View`
   background-color: ${theme.colors.primary};
   border: 2px solid ${theme.colors.background};
 `;
-
+const LogoImage = styled.Image`
+  width: 70%;
+  height: 70%;
+`;
 const CenterContainer = styled.View`
   flex: 1;
   justify-content: center;
@@ -86,6 +89,8 @@ const CenterContainer = styled.View`
 `;
 
 export default function Header() {
+  const HeaderLogo = require('../assets/images/icon.png');
+
   return (
     <HeaderContainer>
       <LeftSection>
@@ -96,7 +101,7 @@ export default function Header() {
             end={{ x: 1, y: 1 }}
             style={{ width: '100%', height: '100%' }}>
             <LogoInner>
-              <LogoText>C</LogoText>
+            <LogoImage source={HeaderLogo} resizeMode="contain" />
             </LogoInner>
           </LinearGradient>
         </LogoContainer>

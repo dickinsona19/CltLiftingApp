@@ -7,6 +7,7 @@ import { useFonts, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from '@e
 import { useState } from 'react';
 import { useUser } from '@/context/UserContext';
 import { changeUserPassword } from '../../../actions/User';
+import { theme } from '@/constants/theme';
 
 export default function PasswordSecurityScreen() {
   const {user} = useUser();
@@ -47,7 +48,7 @@ export default function PasswordSecurityScreen() {
     
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <LinearGradient
-        colors={['rgba(212, 175, 55, 0.15)', 'rgba(17, 17, 17, 0)']}
+       colors={['rgba(75, 156, 211, 0.25)', 'rgba(38, 22, 183, 0)']}
         style={styles.gradient}
       />
       
@@ -57,7 +58,7 @@ export default function PasswordSecurityScreen() {
           onPress={() => router.navigate('/profile')}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="chevron-back" size={28} color="#D4AF37" />
+            <Ionicons name="chevron-back" size={28} color={theme.colors.primary} />
             <Text style={styles.headerTitle}>   Profile</Text>
           </View>
         </TouchableOpacity>
@@ -69,14 +70,14 @@ export default function PasswordSecurityScreen() {
           <TouchableOpacity style={styles.settingItem} onPress={()=>{setShowChangePassword(!showChangePassword)}}>
             <View style={styles.settingLeft}>
               <View style={styles.iconContainer}>
-                <Ionicons name="lock-closed" size={20} color="#D4AF37" />
+                <Ionicons name="lock-closed" size={20} color={theme.colors.primary} />
               </View>
               <View>
                 <Text style={styles.settingText}>Change Password</Text>
                 <Text style={styles.settingSubtext}>Last changed 3 months ago</Text>
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#8E8E93" />
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
           </TouchableOpacity>
           {showChangePassword && (
             <View style={styles.changePasswordContainer}>
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 200,
+    height: 600,
   },
   header: {
     flexDirection: 'row',
