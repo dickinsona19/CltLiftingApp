@@ -65,7 +65,7 @@ export default function ProfileScreen() {
       </Animated.View>
    
      
-{user?.membership &&
+{/* {user?.membership &&
       <Animated.View entering={FadeInUp.delay(600).duration(1000)} style={styles.section}>
         <Text style={styles.sectionTitle}>Membership Details</Text>
         <View style={styles.membershipCard}>
@@ -81,7 +81,7 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Animated.View>
-}
+} */}
      
       <Animated.View entering={FadeInUp.delay(1000).duration(1000)} style={styles.section}>
         <Text style={styles.sectionTitle}>Account Settings</Text>
