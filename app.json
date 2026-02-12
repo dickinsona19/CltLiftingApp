@@ -2,7 +2,7 @@
   "expo": {
     "name": "CLT Lifting Club",
     "slug": "cltliftingclub",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cltliftingclub",
@@ -21,7 +21,7 @@
       "package": "com.adickinson.CltLiftingClub"
     },
     "ios": {
-      "buildNumber": "6",
+      "buildNumber": "8",
       "supportsTablet": true,
       "bundleIdentifier": "com.adickinson.CltLiftingClub",
       "infoPlist": {
