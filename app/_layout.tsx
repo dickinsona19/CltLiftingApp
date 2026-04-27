@@ -3,17 +3,18 @@ import { ImageBackground,View, Text } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
-import { UserProvider, useUser } from '@/context/UserContext';
+import { UserProvider } from '@/context/UserContext';
 import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 import { SplashScreen } from 'expo-router';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '@gluestack-ui/config';
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useFrameworkReady();
-  
+  const stripePublishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
 
   const [fontsLoaded, fontError] = useFonts({
     'Inter-Regular': Inter_400Regular,
@@ -42,13 +43,15 @@ export default function RootLayout() {
 
 
   return (
-    <GluestackUIProvider config={config}>
-    <UserProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </UserProvider>
-    </GluestackUIProvider>
+    <StripeProvider publishableKey={stripePublishableKey}>
+      <GluestackUIProvider config={config}>
+        <UserProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+          <StatusBar style="auto" />
+        </UserProvider>
+      </GluestackUIProvider>
+    </StripeProvider>
   );
 }

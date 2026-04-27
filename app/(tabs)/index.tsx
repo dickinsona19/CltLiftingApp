@@ -1,11 +1,10 @@
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ScrollView, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Dimensions, ScrollView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useFonts, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { useUser } from '@/context/UserContext';
-import { theme } from '@/constants/theme';
+import { StatusBar } from 'expo-status-bar';
 export default function HomeScreen() {
   const screenWidth = Dimensions.get('window').width;
   const qrSize = Math.min(screenWidth * 0.6, 280);
@@ -20,22 +19,10 @@ export default function HomeScreen() {
   if (!fontsLoaded) {
     return null;
   }
-  const callApi = async () => {
-    try {
-      const response = await fetch('https://example.com/api', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const data = await response.json();
-      console.log('API response:', data);
-    } catch (error) {
-      console.error('API error:', error);
-    }
-  };
-
   return (
-    
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <>
+      <StatusBar hidden />
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       
       <LinearGradient
         colors={['rgba(75, 156, 211, 0.25)', 'rgba(38, 22, 183, 0)']}
@@ -61,30 +48,13 @@ export default function HomeScreen() {
               backgroundColor="#FFFFFF"
             />
           </View>
-          <TouchableOpacity style={[styles.walletButton, { opacity: 0.5 }]} disabled onPress={() => console.log('Wallet button clicked')}>
-
-            <Ionicons name="wallet" size={20} color="#111111" />
-            <Text style={styles.walletButtonText}>ADD TO WALLET</Text>
-            <Text style={{
-              position: 'absolute',
-              zIndex:99,
-              top: -10,
-              right: -10,
-              fontSize: 12,
-              color: '#fff',
-              backgroundColor: '#03055B',
-              borderRadius: 20,
-              paddingHorizontal: 8,
-              paddingVertical: 4
-            }}>Soon</Text>
-          </TouchableOpacity>
-
           {/* <View style={styles.statusContainer}>
             <Text style={styles.statusText}>Invalid Member</Text>
           </View> */}
         </View>
       </Animated.View>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 }
 
@@ -170,22 +140,6 @@ const styles = StyleSheet.create({
         elevation: 2,
       },
     }),
-  },
-  walletButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 100,
-    marginBottom: 16,
-  },
-  walletButtonText: {
-    color: '#111111',
-    fontSize: 14,
-    fontFamily: 'Inter-Bold',
-    marginLeft: 8,
-    letterSpacing: 0.5,
   },
   statusContainer: {
     flexDirection: 'row',

@@ -110,6 +110,19 @@ export default function ProfileScreen() {
             <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push('/(tabs)/profile/PaymentMethods')}
+          >
+            <View style={styles.settingLeft}>
+              <View style={styles.iconContainer}>
+                <Ionicons name="card" size={20} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.settingText}>Card Information</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
+          </TouchableOpacity>
+
             
           {/* <AnimatedTouchableOpacity 
             style={styles.settingItem}

@@ -12,7 +12,7 @@
  "resizeMode": "cover",
       "backgroundColor": "#000000"
     },
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "android": {
       "permissions": [
         "READ_EXTERNAL_STORAGE",

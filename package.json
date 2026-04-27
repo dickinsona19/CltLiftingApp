@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
     "build:web": "expo export --platform web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
@@ -20,6 +22,7 @@
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
+    "@stripe/stripe-react-native": "^0.63.0",
     "antd-mobile-rn": "^2.3.3",
     "axios": "^1.8.3",
     "expo": "~52.0.42",
@@ -58,8 +61,8 @@
     "styled-components": "^6.1.8"
   },
   "devDependencies": {
-    "@expo/config-plugins": "~9.0.17",
     "@babel/core": "^7.25.2",
+    "@expo/config-plugins": "~9.0.17",
     "@react-native-community/cli": "latest",
     "@types/react": "~18.3.12",
     "@types/react-native-signature-capture": "^0.4.8",

@@ -12,10 +12,9 @@ export default function ProfileLayout() {
         }}
       />
       <Stack.Screen
-        name="payment-methods"
+        name="PaymentMethods"
         options={{
-          title: 'Payment Methods',
-          presentation: 'modal',
+          title: 'Card Information',
           headerShown: false,
         }}
       />

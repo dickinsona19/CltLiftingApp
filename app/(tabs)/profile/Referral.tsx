@@ -42,7 +42,7 @@ const handleCopy = async () => {
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={() => router.navigate('/profile')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/profile'))}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Ionicons name="chevron-back" size={28} color={theme.colors.primary} />
