@@ -41,8 +41,7 @@ const LogoInner = styled.View`
 `;
 
 const LogoIcon = styled(Dumbbell)`
-  transform: rotate(-45deg);
-`;
+  transform: rotate(-45deg);`;
 
 const Title = styled.Text`
   font-family: ${theme.fonts.bold};

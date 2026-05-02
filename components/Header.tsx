@@ -4,7 +4,6 @@ import styled from 'styled-components/native';
 import { theme } from '@/constants/theme';
 import { Bell } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import {HeaderLogo} from '../assets/images/icon.png'
 const HeaderContainer = styled.View`
   height: ${Platform.OS === 'web' ? '80px' : '100px'};
   background-color: ${theme.colors.background};

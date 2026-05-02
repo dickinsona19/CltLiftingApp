@@ -6,7 +6,7 @@ import Animated, { FadeIn, FadeOut, SlideInUp, SlideOutDown } from 'react-native
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { Platform } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+import { File } from 'expo-file-system';
 import { theme } from '@/constants/theme';
 
 interface EditImageModalProps {
@@ -112,8 +112,8 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
           if (file) {
             console.log('Selected image on web:', file);
   
-            if (file.size > 5 * 1024 * 1024) {
-              setError('Image size should be less than 5MB');
+            if (file.size > 10 * 1024 * 1024) {
+              setError('Image size should be less than 10MB');
               return;
             }
   
@@ -138,21 +138,30 @@ const EditImageModal = ({ setModalVisible }: EditImageModalProps) => {
         }
   
         const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          mediaTypes: ['images'],
           quality: 1,
           allowsEditing: true,
           aspect: [1, 1],
         });
-  
+
         if (result.canceled) {
           console.log('User cancelled image picker');
           return;
         }
-  
+
         const selectedImage = result.assets[0];
-        const fileInfo = await FileSystem.getInfoAsync(selectedImage.uri);
-        if (fileInfo.size && fileInfo.size > 5 * 1024 * 1024) {
-          setError('Image size should be less than 5MB');
+        // Prefer the size returned by the picker; fall back to the new File API
+        // when the picker doesn't supply it (some Android providers).
+        let sizeBytes: number | null | undefined = selectedImage.fileSize;
+        if (sizeBytes == null) {
+          try {
+            sizeBytes = new File(selectedImage.uri).size;
+          } catch (sizeError) {
+            console.warn('Could not read picked image size:', sizeError);
+          }
+        }
+        if (sizeBytes && sizeBytes > 10 * 1024 * 1024) {
+          setError('Image size should be less than 10MB');
           return;
         }
   
